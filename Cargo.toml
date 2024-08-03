@@ -2,6 +2,9 @@
 name = "epic_bevy_remote_reflection"
 version = "0.1.0"
 edition = "2021"
+authors = ["Multirious"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
 
 [dependencies]
 bevy_reflect = "0.14.1" 
