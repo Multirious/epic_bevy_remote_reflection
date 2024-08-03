@@ -10,4 +10,7 @@ Rust doesn't have a guarantee that the underlying virtual table memory layout wi
 stays the same between Rust releases. It's a part of the compiler, not the language.
 So be aware of changes and untested version!
 
+Tested versions:
+- `1.80`
+
 https://geo-ant.github.io/blog/2023/rust-dyn-trait-objects-fat-pointers/ 
