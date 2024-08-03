@@ -1,7 +1,7 @@
 # epic_bevy_remote_reflection
 
 Implement `bevy_reflect`'s `Reflect` trait for remote type, bypassing the orphan
-rule by editing trait-object's virtual table at runtime.
+rule by editing trait-object's virtual table at runtime and without changes to `bevy_reflect`!
 
 # Unsafe, do not use for production! (winked)
 
