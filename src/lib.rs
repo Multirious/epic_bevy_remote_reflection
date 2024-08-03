@@ -168,3 +168,40 @@ struct ReflectVtable {
     serializable: fn(*const ()) -> Option<Serializable<'static>>,
     is_dynamicfn: fn(*const ()) -> bool,
 }
+
+pub trait ReflectViaExt {
+    fn into_reflect_via<L>(self: Box<Self>) -> Box<dyn Reflect>
+    where
+        Self: Sized,
+        L: RemoteReflectList<Self>,
+    {
+        <L::RemoteReflector as RemoteReflect>::remote_into_reflect(self)
+    }
+
+    fn as_reflect_via<L>(&self) -> &dyn Reflect
+    where
+        Self: Sized,
+        L: RemoteReflectList<Self>,
+    {
+        <L::RemoteReflector as RemoteReflect>::remote_as_reflect(self)
+    }
+
+    fn as_reflect_mut_via<L>(&mut self) -> &mut dyn Reflect
+    where
+        Self: Sized,
+        L: RemoteReflectList<Self>,
+    {
+        <L::RemoteReflector as RemoteReflect>::remote_as_reflect_mut(self)
+    }
+}
+impl<T> ReflectViaExt for T {}
+
+pub trait RemoteReflectList<I> {
+    type RemoteReflector: RemoteReflect<Item = I>;
+}
+impl<T, I> RemoteReflectList<I> for T
+where
+    T: RemoteReflect<Item = I>,
+{
+    type RemoteReflector = T;
+}

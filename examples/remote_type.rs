@@ -15,7 +15,7 @@ mod cool_crate {
 
 use bevy_reflect::{Reflect, ReflectRef};
 use cool_crate::cool_module::CoolType;
-use epic_bevy_remote_reflection::RemoteReflect;
+use epic_bevy_remote_reflection::{ReflectViaExt, RemoteReflect, RemoteReflectList};
 use std::any::TypeId;
 
 // Must structured exactly like the remote type
@@ -33,20 +33,28 @@ unsafe impl RemoteReflect for RemoteCoolType {
     type Item = CoolType;
 }
 
+// You can use this API so you only need one namespace for all your
+// remote reflection need!
+// Let's go do UB ergonomically!
+struct MyReflect;
+impl RemoteReflectList<CoolType> for MyReflect {
+    type RemoteReflector = RemoteCoolType;
+}
+
 fn main() {
     unsafe { std::env::set_var("RUST_BACKTRACE", "1") };
     let cool_value = CoolType {
         id: 69,
         things: vec!["Book".to_string(), "Table".to_string()],
     };
-    let reflected = RemoteCoolType::remote_as_reflect(&cool_value);
+    let reflected = cool_value.as_reflect_via::<MyReflect>();
     assert_eq!(reflected.type_id(), TypeId::of::<CoolType>());
     assert_eq!(reflected.as_any().type_id(), TypeId::of::<CoolType>());
     assert!(reflected.as_any().downcast_ref::<CoolType>().is_some());
     println!("{:?}", reflected.as_any().downcast_ref::<CoolType>());
     println!("{:?}", reflected);
 
-    let boxed = RemoteCoolType::remote_into_reflect(Box::new(cool_value));
+    let boxed = Box::new(cool_value).into_reflect_via::<MyReflect>();
     let ReflectRef::Struct(struct_ref) = boxed.reflect_ref() else {
         unreachable!()
     };
